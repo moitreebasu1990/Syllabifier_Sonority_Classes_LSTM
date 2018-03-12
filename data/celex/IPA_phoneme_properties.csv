@@ -4,7 +4,7 @@
 * D = Diphthongs
 * N = Nasal
 * P = Plosive
-* PF = Affricates
+* A = Affricates
 * F = Fricatives
 ************************
 V,ɔː
@@ -34,8 +34,8 @@ P,t
 P,d
 P,k
 P,g
-PF,tʃ
-PF,dʒ
+A,tʃ
+A,dʒ
 F,f
 F,v
 F,θ
