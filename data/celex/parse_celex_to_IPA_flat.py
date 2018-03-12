@@ -36,7 +36,7 @@ def phonme_properties_mapping(flatten_IPA_classes, source, target):
 	flatten_source="".join(source_list)
 	flatten_target=" ".join(target_list) + "\n"
 
-	return flatten_source + " " + flatten_target
+	return flatten_source + " , " + flatten_target
 
 
 def strip_line(line, dict_IPA):
