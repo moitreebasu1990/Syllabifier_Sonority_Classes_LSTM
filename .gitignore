@@ -9,3 +9,6 @@
 *.npy
 
 *.dict
+data/celex/sourceTable\.csv
+
+data/celex/targetTable\.csv

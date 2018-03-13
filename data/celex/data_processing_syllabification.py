@@ -34,7 +34,7 @@ def processLine(line):
 
     hello HH AH0 L OW1
 
-    [word space phoneme_set (separated by space)]
+    [word space target_set (separated by space)]
 
     Words with these characters ['().0123456789'] e.g. HOUSE(2) are removed
 
@@ -42,42 +42,42 @@ def processLine(line):
         line: a line form the cmu_data file
 
     :return:
-        graphemeSet: list chars in the word
-        phonemeSet:  list phonemes in the pronunciation
+        sourceSet: list chars in the word
+        targetSet:  list targets in the pronunciation
     """
 
     line = line.strip()
-    grapheme, phoneme = line.split(",", 1)
-    grapheme = grapheme.strip()
-    phoneme = phoneme.strip()
-    graphemeSet = list(grapheme)
-    phonemeSet = phoneme.split(" ")
+    source, target = line.split(",", 1)
+    source = source.strip()
+    target = target.strip()
+    sourceSet = list(source)
+    targetSet = target.split(" ")
 
-    return graphemeSet, phonemeSet
+    return sourceSet, targetSet
 
 
 def readDataSet(dictFile):
     """
     Process dataset provided as commandline argument
     int two sets of ordered dict of gramphemeDict and
-    phonemeTable
+    targetTable
 
     :param:
 
-        dictFile: a dictionary file containing grapheme to phoneme examples
+        dictFile: a dictionary file containing source to target examples
 
     :return:
-        graphemeTable: a indexed ordered dictionary of all the graphemes
-        phonemeTable: a indexed ordered dictionary of all the phonemes
+        sourceTable: a indexed ordered dictionary of all the sources
+        targetTable: a indexed ordered dictionary of all the targets
     """
-    graphemeCounter = 0
-    phonemeCounter = 0
+    sourceCounter = 0
+    targetCounter = 0
 
-    graphemeTable = collections.OrderedDict()
-    phonemeTable = collections.OrderedDict()
+    sourceTable = collections.OrderedDict()
+    targetTable = collections.OrderedDict()
 
-    graphemeList = []
-    phonemeList = []
+    sourceList = []
+    targetList = []
 
     data_dir = os.path.dirname(os.path.abspath(dictFile))
 
@@ -86,104 +86,104 @@ def readDataSet(dictFile):
     if os.path.exists(dictFile):
         file = open(dictFile, "r", encoding='utf-8')
         for line in file.readlines():
-            graphemeSet, phonemeSet = processLine(line)
-            graphemeList.append(graphemeSet)
-            phonemeList.append(phonemeSet)
+            sourceSet, targetSet = processLine(line)
+            sourceList.append(sourceSet)
+            targetList.append(targetSet)
 
         # Remove words with these characters e.g. HOUSE(2)
         redundant = '().0123456789'
         redundant_word = re.compile('[%s]' % redundant)
 
         # Removing redundancies and abnormal words from the cmu_data
-        graphemeList, phonemeList = zip(*[(x, y) for x, y in zip(graphemeList, phonemeList)
+        sourceList, targetList = zip(*[(x, y) for x, y in zip(sourceList, targetList)
                                           if not bool(redundant_word.findall(''.join(x)))])
 
         for token in _START_VOCAB:
-            graphemeTable[token] = graphemeCounter
-            graphemeCounter += 1
-            phonemeTable[token] = phonemeCounter
-            phonemeCounter += 1
+            sourceTable[token] = sourceCounter
+            sourceCounter += 1
+            targetTable[token] = targetCounter
+            targetCounter += 1
 
-        for grapheme in graphemeList:
-            for literal in grapheme:
-                if literal not in graphemeTable:
-                    graphemeTable[literal] = graphemeCounter
-                    graphemeCounter += 1
+        for source in sourceList:
+            for literal in source:
+                if literal not in sourceTable:
+                    sourceTable[literal] = sourceCounter
+                    sourceCounter += 1
 
-        for phoneme in phonemeList:
-            for phone in phoneme:
-                if phone not in phonemeTable:
-                    phonemeTable[phone] = phonemeCounter
-                    phonemeCounter += 1
+        for target in targetList:
+            for phone in target:
+                if phone not in targetTable:
+                    targetTable[phone] = targetCounter
+                    targetCounter += 1
 
     else:
         logging.debug("Can't find file: %s", dictFile)
 
 
-    graphemeTableFile = data_dir + "/graphemeTable.csv"
-    phonemeTableFile = data_dir + "/phonemeTable.csv"
+    sourceTableFile = data_dir + "/sourceTable.csv"
+    targetTableFile = data_dir + "/targetTable.csv"
     
-    g = csv.writer(open(graphemeTableFile, "w", encoding='utf-8'))
-    for key, val in graphemeTable.items():
+    g = csv.writer(open(sourceTableFile, "w", encoding='utf-8'))
+    for key, val in sourceTable.items():
         g.writerow([key, val])
 
 
-    p = csv.writer(open(phonemeTableFile, "w", encoding='utf-8'))
-    for key, val in phonemeTable.items():
+    p = csv.writer(open(targetTableFile, "w", encoding='utf-8'))
+    for key, val in targetTable.items():
         p.writerow([key, val])
 
-    # assert (graphemeTable == np.genfromtxt(graphemeTableFile, delimiter=','))
-    # assert (phonemeTable == np.genfromtxt(phonemeTableFile, delimiter=','))
+    # assert (sourceTable == np.genfromtxt(sourceTableFile, delimiter=','))
+    # assert (targetTable == np.genfromtxt(targetTableFile, delimiter=','))
 
-    graphemeList_train, graphemeList_test, phonemeList_train, phonemeList_test = train_test_split(graphemeList,
-                                                                                                  phonemeList,
+    sourceList_train, sourceList_test, targetList_train, targetList_test = train_test_split(sourceList,
+                                                                                                  targetList,
                                                                                                   test_size=0.15,
                                                                                                   random_state=42)
 
-    graphemeList_test, graphemeList_val, phonemeList_test, phonemeList_val = train_test_split(graphemeList_test,
-                                                                                              phonemeList_test,
+    sourceList_test, sourceList_val, targetList_test, targetList_val = train_test_split(sourceList_test,
+                                                                                              targetList_test,
                                                                                               test_size=0.2,
                                                                                               random_state=35)
 
-    return graphemeList_train, graphemeList_val, graphemeList_test, phonemeList_train, phonemeList_val, phonemeList_test, graphemeTable, phonemeTable, data_dir
+    return sourceList_train, sourceList_val, sourceList_test, targetList_train, targetList_val, targetList_test, sourceTable, targetTable, data_dir
 
 
-def processAndSaveData(graphemeList, phonemeList, graphemeTable, phonemeTable, dataType,data_dir):
+def processAndSaveData(sourceList, targetList, sourceTable, targetTable, dataType,data_dir):
     """
 
-    :param graphemeList:    List of Graphemes in the dataSet
-    :param phonemeList:     List of Phonemes in the dataSet
-    :param graphemeTable:   Table of each possible chars encountered in the dataSet
-    :param phonemeTable:    Table of each possible phones encountered in the dataSet
+    :param sourceList:    List of sources in the dataSet
+    :param targetList:     List of targets in the dataSet
+    :param sourceTable:   Table of each possible chars encountered in the dataSet
+    :param targetTable:    Table of each possible phones encountered in the dataSet
     :param dataType:        Type in which data needs to be saved for exmaple (Train, Test, Validation)
 
     """
-    graphemeIds = []
-    phonemeIds = []
+    sourceIds = []
+    targetIds = []
 
-    graphemeFile = data_dir + "/grapheme_" + dataType
-    phonemeFile = data_dir + "/phoneme_" + dataType
+    sourceFile = data_dir + "/source_" + dataType
+    targetFile = data_dir + "/target_" + dataType
 
-    saveSplittedGraphemeLoc = data_dir + "/readableData/"
-    saveSplittedPhonemeLoc = data_dir + "/readableData/"
+    saveSplittedsourceLoc = data_dir + "/readableData/"
+    saveSplittedtargetLoc = data_dir + "/readableData/"
 
-    pathlib.Path(saveSplittedGraphemeLoc).mkdir(parents=True, exist_ok=True)
-    with open(saveSplittedGraphemeLoc + dataType + "_grapheme.txt", "w", encoding='utf-8') as f:
-        for grapheme in graphemeList:
-            graphemeIds.append([graphemeTable[token] for token in grapheme])
-            f.write(str(grapheme)+"\n")
+    pathlib.Path(saveSplittedsourceLoc).mkdir(parents=True, exist_ok=True)
+    with open(saveSplittedsourceLoc + dataType + "_source.txt", "w", encoding='utf-8') as f:
+        for source in sourceList:
+            sourceIds.append([sourceTable[token] for token in source])
+            f.write(str(source)+"\n")
 
     f.close()
 
-    pathlib.Path(saveSplittedPhonemeLoc).mkdir(parents=True, exist_ok=True)
-    with open(saveSplittedPhonemeLoc + dataType + "_phoneme.txt", "w", encoding='utf-8') as f:
-        for phoneme in phonemeList:
-            phonemeIds.append([phonemeTable[phone] for phone in phoneme])
-            f.write(str(phoneme)+"\n")
+    pathlib.Path(saveSplittedtargetLoc).mkdir(parents=True, exist_ok=True)
+    with open(saveSplittedtargetLoc + dataType + "_target.txt", "w", encoding='utf-8') as f:
+        for target in targetList:
+            targetIds.append([targetTable[phone] for phone in target])
+            f.write(str(target)+"\n")
     f.close()
 
-    np.save(graphemeFile, graphemeIds)
-    np.save(phonemeFile, phonemeIds)
+    np.save(sourceFile, sourceIds)
+    np.save(targetFile, targetIds)
 
 
 
@@ -204,11 +204,11 @@ def argumentParsing():
 
 if __name__ == "__main__":
     FLAGS = argumentParsing()
-    graphemeList_train, graphemeList_val, graphemeList_test, phonemeList_train, phonemeList_val, phonemeList_test, graphemeTable, phonemeTable, data_dir = readDataSet(FLAGS.dict)
+    sourceList_train, sourceList_val, sourceList_test, targetList_train, targetList_val, targetList_test, sourceTable, targetTable, data_dir = readDataSet(FLAGS.dict)
 
-    processAndSaveData(graphemeList_train, phonemeList_train, graphemeTable, phonemeTable, "train", data_dir)
+    processAndSaveData(sourceList_train, targetList_train, sourceTable, targetTable, "train", data_dir)
     print("Generated Train set")
-    processAndSaveData(graphemeList_val, phonemeList_val, graphemeTable, phonemeTable, "validation",data_dir)
+    processAndSaveData(sourceList_val, targetList_val, sourceTable, targetTable, "validation",data_dir)
     print("Generated Validation set")
-    processAndSaveData(graphemeList_test, phonemeList_test, graphemeTable, phonemeTable, "test",data_dir)
+    processAndSaveData(sourceList_test, targetList_test, sourceTable, targetTable, "test",data_dir)
     print("Generated Test set")
