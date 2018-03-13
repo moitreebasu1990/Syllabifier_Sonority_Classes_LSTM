@@ -1,3 +1,6 @@
+#Run the program "python parse_celex_to_IPA_syllabification.py celex_g2p.dict"
+
+
 import fileinput
 import sys
 import csv
@@ -73,7 +76,7 @@ def parse_file():
 	
 	#takes a dictionary filename as argument for parsing
 
-	new_filename="CELEX_IPA_flatten_data.txt"
+	new_filename="CELEX_IPA_data_syllabification.txt"
 	fw = open(new_filename,"w", encoding='utf-8') #opens the file
 	fr = open(sys.argv[1], "r") # raw celex dataset
 
@@ -93,6 +96,5 @@ def parse_file():
 	fr.close()
 	fw.close()
 
-# call the file with the celex raw dataset as argv[1]
 if __name__ == '__main__':
 	parse_file()
