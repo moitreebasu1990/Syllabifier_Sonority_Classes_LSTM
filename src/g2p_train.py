@@ -260,6 +260,12 @@ def train():
         print("Reading data from %s" % FLAGS['data_dir'])
         sys.stdout.flush()
 
+        # checking and creating(if needed) checkpoint directory
+        checkpoint_dir = FLAGS['model_checkpoint_path']
+        if not os.path.exists(checkpoint_dir):
+            os.makedirs(checkpoint_dir)
+
+
         # Load train and dev data
         train_data = loadAndBucketData(FLAGS['data_dir'], "train")
         dev_set = loadAndBucketData(FLAGS['data_dir'], "validation")
@@ -335,7 +341,7 @@ def train():
                 best_wer = avg_wer
                 print("Saving Updated Model")
                 sys.stdout.flush()
-                checkpoint_path = os.path.join(FLAGS['model_checkpoint_path'], "g2p.ckpt")
+                checkpoint_path = os.path.join(checkpoint_dir, "g2p.ckpt")
                 model.saver.save(sess, checkpoint_path,
                                  global_step=model.global_step,
                                  write_meta_graph=False)
