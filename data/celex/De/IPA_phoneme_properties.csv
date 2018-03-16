@@ -1,0 +1,68 @@
+*************************
+* V = vowels
+* S = Semi-vowels/Approximants
+* D = Diphthongs
+* N = Nasal
+* P = Plosive
+* A = Affricates
+* F = Fricatives
+************************
+P,p
+P,b
+P,t
+P,d
+P,k
+P,ɠ
+N,ŋ
+N,m
+N,n
+S,l
+S,r
+F,f
+F,v
+F,s
+F,z
+F,ʃ
+F,ʒ
+S,j
+F,χ
+F,h
+S,w
+V,I
+V,Y
+V,ɛ
+V,œ
+V,æ
+V,a
+V,ɑ
+V,ʌ
+V,ɔ
+V,ʊ
+V,ə
+V,œ᷈ː
+V,æ᷈
+V,ɑ᷈ː
+V,æ᷈ː
+V,ɒ᷈ː
+A,pf
+A,ts
+A,tʃ
+A,dʒ
+V,iː
+V,ɑː
+V,aː
+V,ɔː
+V,uː
+V,ɜː
+V,yː
+V,ɛː
+V,eː
+V,øː
+V,oː
+D,eI
+D,aI
+D,ɔI
+D,aʊ
+D,ai
+D,au
+D,ɔy

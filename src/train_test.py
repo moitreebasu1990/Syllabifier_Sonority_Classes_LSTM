@@ -74,7 +74,7 @@ def initialize_vocabulary(vocabulary_path):
         rev_vocab: A list mapping index to element of vocabulary
     """
     if os.path.isfile(vocabulary_path):
-        reader = csv.reader(open(vocabulary_path, 'r', encoding ='utf-8'))
+        reader = csv.reader(open(vocabulary_path, 'r', encoding = 'utf-8'))
         vocab_table = {}
         for row in reader:
             k, v = row

@@ -13,8 +13,8 @@
 "max_epochs":150,
 "eval":false,
 "run_id":0,
-"data_dir":"../data/celex",
-"source_vocab_path":"../data/celex/sourceTable.csv",
-"target_vocab_path":"../data/celex/targetTable.csv",
-"model_checkpoint_path":"../model_checkpoints/celex"
+"data_dir":"../data/celex/En",
+"source_vocab_path":"../data/celex/En/sourceTable.csv",
+"target_vocab_path":"../data/celex/En/targetTable.csv",
+"model_checkpoint_path":"../model_checkpoints/celex/En"
 }
