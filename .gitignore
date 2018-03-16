@@ -12,3 +12,7 @@
 data/celex/sourceTable\.csv
 
 data/celex/targetTable\.csv
+
+data/celex/En/sourceTable\.csv
+
+data/celex/En/targetTable\.csv
